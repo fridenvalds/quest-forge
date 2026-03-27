@@ -1,26 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ============================================
+   MODERN FANTASY THEME - QUEST FORGE
+   ============================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-primary: #050517;
+  --color-bg-secondary: #0a0e2a;
+  --color-surface: #0a1f44;
+  --color-surface-hover: #0f2a5c;
+  --color-action-glow: #ff6b35;
+  --color-action-glow-dim: #cc5529;
+  --color-magic: #BE8CFF;
+  --color-magic-dim: #9a6ad4;
+  --color-success: #5fd38d;
+  --color-success-dim: #3fa86a;
+  --color-danger: #ff4757;
+  --color-warning: #ffa502;
+  --color-text-primary: #e8e6f0;
+  --color-text-secondary: #8b8aa0;
+  --color-text-muted: #5a5970;
+  --color-border: #1a2a50;
+  --color-border-glow: #2a3a6a;
+
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Inter', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #050517;
+  --foreground: #e8e6f0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+/* ============================================
+   GLASSMORPHISM UTILITIES
+   ============================================ */
+
+.glass {
+  background: rgba(10, 31, 68, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(190, 140, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(5, 5, 23, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(26, 42, 80, 0.5);
+}
+
+.glass-hover:hover {
+  background: rgba(15, 42, 92, 0.7);
+  border-color: rgba(190, 140, 255, 0.25);
+  box-shadow: 0 0 20px rgba(190, 140, 255, 0.1), 0 0 40px rgba(190, 140, 255, 0.05);
+}
+
+/* ============================================
+   GLOW EFFECTS
+   ============================================ */
+
+.glow-action {
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.3), 0 0 30px rgba(255, 107, 53, 0.1);
+}
+
+.glow-action:hover {
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.5), 0 0 40px rgba(255, 107, 53, 0.2);
+}
+
+.glow-magic {
+  box-shadow: 0 0 15px rgba(190, 140, 255, 0.3), 0 0 30px rgba(190, 140, 255, 0.1);
+}
+
+.glow-success {
+  box-shadow: 0 0 15px rgba(95, 211, 141, 0.3), 0 0 30px rgba(95, 211, 141, 0.1);
+}
+
+.glow-xp-bar {
+  box-shadow: 0 0 10px rgba(190, 140, 255, 0.5), inset 0 0 10px rgba(190, 140, 255, 0.2);
+}
+
+/* ============================================
+   XP PROGRESS BAR
+   ============================================ */
+
+.xp-bar-track {
+  background: rgba(10, 31, 68, 0.8);
+  border: 1px solid rgba(190, 140, 255, 0.2);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  background: linear-gradient(90deg, #9a6ad4, #BE8CFF, #d4b3ff);
+  border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.xp-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============================================
+   STAT CARD GLOW BORDER
+   ============================================ */
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-magic), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050517;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a2a50;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3a6a;
 }
