@@ -12,6 +12,16 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false)
   const supabase = createClient()
 
+  async function getClientIp(): Promise<string> {
+    try {
+      const res = await fetch('/api/ip')
+      const data = await res.json()
+      return data.ip || 'unknown'
+    } catch {
+      return 'unknown'
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -23,6 +33,17 @@ export default function AuthPage() {
         if (error) throw error
         window.location.href = '/dashboard'
       } else {
+        // Check IP limit before allowing signup
+        const ip = await getClientIp()
+        const { data: ipAllowed } = await supabase.rpc('check_ip_allowed', { p_ip: ip })
+
+        if (!ipAllowed) {
+          setError('An account has already been registered from this network. Only one account per IP address is allowed.')
+          setLoading(false)
+          return
+        }
+
+        // Proceed with signup
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -31,6 +52,17 @@ export default function AuthPage() {
           },
         })
         if (error) throw error
+
+        // Brief pause to let the auto-confirm trigger fire
+        await new Promise((r) => setTimeout(r, 500))
+
+        // Sign in immediately (email is now auto-confirmed by our trigger)
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+        if (signInError) throw signInError
+
+        // Record this IP to prevent duplicate signups
+        await supabase.rpc('record_signup_ip', { p_ip: ip })
+
         window.location.href = '/dashboard'
       }
     } catch (err: unknown) {
